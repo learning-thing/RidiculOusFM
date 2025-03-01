@@ -8,7 +8,6 @@
 
 class ListButton {
     private:
-        vec2 pos;
         vec2 size;
         std::string text;
         bool clicked = false;
@@ -23,7 +22,7 @@ class ListButton {
 
         }
 
-        void Draw();
+        void draw();
         bool isHovering();
 };
 
@@ -50,8 +49,7 @@ class ButtonList {
         void draw() {
             for (int i = 0; i < ltbns.size(); i++) {
                 if (ltbns[i].tpos.y()>=pos.y())
-                    ltbns[i].Draw();
-                    
+                    ltbns[i].draw();
             }
         }
 };
@@ -60,24 +58,24 @@ class ButtonList {
 
 class button {
     public:
-        vec2 tpos = vec2(0);
+        vec2 tpos = vec2(100, 0);
         vec2 pos = vec2(0);
         vec2 size;
         bool clicked = false;
         std::string myText;
         bool HoveringOver = false;
         Color HoverColor = RED;
-
+        Color col = WHITE;
 
     button(vec2 position, vec2 dimensions) : pos(position), size(dimensions) {
-        tpos.e[0] = pos.x();
+        //tpos.e[0] = pos.x();
     }
     button(vec2 position, vec2 dimensions, const char* text) : pos(position), size(dimensions) {
-        tpos.e[0] = pos.x();
+        //tpos.e[0] = pos.x();
         myText = text;
     }
-    button(vec2 position, vec2 dimensions, const char* text, Color hoverColor) : pos(position), size(dimensions), HoverColor(hoverColor) {
-        tpos.e[0] = pos.x();
+    button(vec2 position, vec2 dimensions, const char* text, Color normalColor) : pos(position), size(dimensions), col(normalColor) {
+        //tpos.e[0] = pos.x();
         myText = text;
     }
 
@@ -91,13 +89,17 @@ class button {
     void Draw() {
         clicked = false;
         if (isHovering()) DrawRectangleLines(tpos.x(), tpos.y(), size.x(), size.y(), HoverColor);
-        else DrawRectangleLines(tpos.x(), tpos.y(), size.x(), size.y(), WHITE);
-        DrawText(myText.c_str(), tpos.x()+5, tpos.y()+size.y()/4, 20, WHITE);
-        tpos += vec2(0, pos.y()-tpos.y())*.05;//Move from the temporary position towards the desiredposition
+        else DrawRectangleLines(tpos.x(), tpos.y(), size.x(), size.y(), col);
+        DrawText(myText.c_str(), tpos.x()+5, tpos.y()+size.y()/4, 20, col);
+        tpos += vec2(pos.x()-tpos.x(), pos.y()-tpos.y())*.05;//Move from the temporary position towards the desiredposition
+        //tpos += pos-tpos*.05;//Move from the temporary position towards the desiredposition
+
 
         if (isHovering())
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 clicked = true;
+
+        
     }
 };
 
@@ -107,8 +109,12 @@ class TGUI {
         std::vector<button> btns;
         vec2 last_btn_pos;
         vec2 last_size;
+        float totalScrolled = 0;
+        float scrollPos = 0;
         
     public:
+        float scroll = 0;
+
         TGUI() {
             btns.reserve(5);
         }
@@ -134,16 +140,22 @@ class TGUI {
         }
 
         int Draw() {
-            for (int i = 0; i < btns.size(); i++)
+            for (int i = 0; i < btns.size(); i++) {
+                //check click
                 btns[i].Draw();
+                btns[i].pos+=vec2(0, scroll);
+                
 
-            //check click
-            for (int i = 0; i < btns.size(); i++)
                 if (btns[i].clicked) {
                     std::clog << "Clicked button " << i+1 << "\n";
                     return i+1;
                 }
-
+            }
+            scroll *= .5;
+            scrollPos+=scroll;
+            float scrollPerc = (-scrollPos/(btns.size()*55));
+            DrawRectangle(GetScreenWidth()-10, GetScreenHeight()*scrollPerc*2, 20, 10, WHITE);
+            
             return 0;
         }
 
@@ -159,7 +171,7 @@ bool ListButton::isHovering() {
     return false;
 }
 
-void ListButton::Draw() {
+void ListButton::draw() {
     clicked = false;
     if (isHovering()) DrawRectangleLines(tpos.x(), tpos.y(), size.x(), size.y(), HoverColor);
     else DrawRectangleLines(tpos.x(), tpos.y(), size.x(), size.y(), WHITE);
