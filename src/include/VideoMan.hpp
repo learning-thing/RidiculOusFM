@@ -17,9 +17,11 @@ class VideoMan {
         std::string onlyFileName(std::string somePath);
         std::string upDir(std::string somePath);
 
+        unsigned int padding = 55;
+
         void ls() {
             int i = 0;
-            ui.addButton(vec2(15, 10)+vec2(0, 55*i), vec2(1000, 50), upDir(path).c_str());
+            ui.addButton(vec2(15, 10)+vec2(0, padding*i), vec2(1000, 50), upDir(path).c_str());
             dirs.push_back(upDir(path));
 
             i++;
@@ -31,7 +33,7 @@ class VideoMan {
                     //if (i>30) break;
                     std::cout << entry.path() << std::endl;
                     dirs.push_back(entry.path());
-                    ui.addButton(vec2(15, 10)+vec2(0, 51*i), vec2(1000, 50), onlyFileName( entry.path().string()  ).c_str(), GREEN);
+                    ui.addButton(vec2(15, 10)+vec2(0, padding*i), vec2(1000, 50), onlyFileName( entry.path().string()  ).c_str(), GREEN);
                 }
             }
 
@@ -43,7 +45,7 @@ class VideoMan {
                     //if (i>30) break;
                     std::cout << entry.path() << std::endl;
                     dirs.push_back(entry.path());
-                    ui.addButton(vec2(15, 10)+vec2(0, 51*i), vec2(1000, 50), onlyFileName( entry.path().string()  ).c_str(), GREEN);
+                    ui.addButton(vec2(15, 10)+vec2(0, padding*i), vec2(1000, 50), onlyFileName( entry.path().string()  ).c_str(), GREEN);
                 }
             }
 
@@ -54,7 +56,7 @@ class VideoMan {
                     //if (i>30) break;
                     std::cout << entry.path() << std::endl;
                     dirs.push_back(entry.path());
-                    ui.addButton(vec2(15, 10)+vec2(0, 51*i), vec2(1000, 50), onlyFileName( entry.path().string()  ).c_str() );   
+                    ui.addButton(vec2(15, 10)+vec2(0, padding*i), vec2(1000, 50), onlyFileName( entry.path().string()  ).c_str() );   
                 }
             }
         }
@@ -70,7 +72,9 @@ class VideoMan {
         void Handle_buttons(int button_pressed);
 
         void draw() {
-            ui.scroll += GetMouseWheelMoveV().y*30;
+            if (ui.scrollPerc>=0 && GetMouseWheelMoveV().y>0 || ui.scrollPerc<=1 && GetMouseWheelMoveV().y<0 )
+                ui.scroll += GetMouseWheelMoveV().y*30;
+            
             Handle_buttons(ui.Draw());
         }
 };

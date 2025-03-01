@@ -110,13 +110,14 @@ class TGUI {
         vec2 last_btn_pos;
         vec2 last_size;
         float totalScrolled = 0;
-        float scrollPos = 0;
         
     public:
+        float scrollPos = 0;
         float scroll = 0;
+        float scrollPerc;
 
         TGUI() {
-            btns.reserve(5);
+            btns.reserve(10);
         }
 
         void addButton(vec2 size) {
@@ -153,13 +154,14 @@ class TGUI {
             }
             scroll *= .5;
             scrollPos+=scroll;
-            float scrollPerc = (-scrollPos/(btns.size()*55));
+            scrollPerc = (-scrollPos/(btns.size()*55));
             DrawRectangle(GetScreenWidth()-10, GetScreenHeight()*scrollPerc*2, 20, 10, WHITE);
             
             return 0;
         }
 
         void clear() {
+            scrollPos = 0;
             btns.clear();
         }
 };
