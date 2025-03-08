@@ -58,7 +58,7 @@ class ButtonList {
 
 class button {
     public:
-        vec2 tpos = vec2(100, 0);
+        vec2 tpos = vec2(10, 100);
         vec2 pos = vec2(0);
         vec2 size;
         bool clicked = false;

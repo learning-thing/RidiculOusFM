@@ -6,13 +6,17 @@
 int main() {
     std::cout << "hello world\n";
     InitWindow(1080, 720, "Whatever this is cinema player");
-    Shader ppfx = LoadShader(0, "pp.fs");
+    Shader ppfx = LoadShader(0, "shader/pp.fs");
+    int iTimeLoc = GetShaderLocation(ppfx, "iTime");
     RenderTexture ppLayer = LoadRenderTexture(1080, 720);
     u_int8_t padding = 15;
 
     VideoMan vm;
     SetWindowState(FLAG_VSYNC_HINT);
+    float iTime = 0;
     while (!WindowShouldClose()) {
+        iTime+=GetFrameTime();
+        SetShaderValue(ppfx, iTimeLoc, &iTime, SHADER_UNIFORM_FLOAT);
         //Actual drawing content
         BeginTextureMode(ppLayer);
             //DrawCircle(100, 100, 10, WHITE);//Test Circle
@@ -32,8 +36,5 @@ int main() {
     UnloadShader(ppfx);
     UnloadRenderTexture(ppLayer);
     CloseWindow();
-    
-    
-
     return 0;
 }
